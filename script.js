@@ -4,7 +4,10 @@ const PADDLE_WIDTH = 90;
 const PADDLE_HEIGHT = 20;
 const MARGIN_BOTTOM = 40;
 const PADDLE_dX = 3;
+const BALL_dX = 3;
+const BALL_dY = -3;
 const BALL_RADIUS = 10;
+const SPEED_PER_UNIT_TIME = 5;
 let rightKey = false;
 let leftKey = false;
 let enterKey = false;
@@ -29,8 +32,9 @@ const ball = {
     r: BALL_RADIUS,
     x: canvas.width / 2,
     y: paddle.y - BALL_RADIUS,
-    dx: 3,
-    dy: -3,
+    dx: BALL_dX,
+    dy: BALL_dY,
+    speed: SPEED_PER_UNIT_TIME
 };
 
 function drawPaddle() {
@@ -39,7 +43,7 @@ function drawPaddle() {
     ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
     ctx.strokeStyle = "yellow"
     ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
-};
+}
 
 function drawBall() {
     ctx.beginPath();
@@ -49,7 +53,7 @@ function drawBall() {
     ctx.fill();
     ctx.strokeStyle = "black";
     ctx.stroke();
-};
+}
 
 function resetBall(){
     ball.x = canvas.width / 2;
@@ -65,17 +69,27 @@ function moveBall(){
 }
 
 function ballWallCollision(){
-    if(ball.x + ball.r > canvas.width || ball.x - ball.r < 0){
+    if (ball.x + ball.r > canvas.width || ball.x - ball.r < 0){
         ball.dx = - ball.dx;
     }
-    else if(ball.y - ball.r < 0){
+    else if (ball.y - ball.r < 0){
         ball.dy = -ball.dy;
     }
-    else if(ball.y + ball.r > canvas.height){
+    else if (ball.y + ball.r > canvas.height){
         LIFE--;
         resetBall();
     }
-};
+}
+
+function ballPaddleCollision() {
+    if (ball.y > paddle.y && ball.y < paddle.y + paddle.height &&
+        ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+            let collisionPointGradient = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
+            let collisionAngle = collisionPointGradient * Math.PI / 3; 
+            ball.dx = ball.speed * Math.sin(collisionAngle);
+            ball.dy = -ball.speed * Math.cos(collisionAngle);
+        }
+}
 
 
 function movePaddle() {
@@ -91,7 +105,7 @@ function movePaddle() {
     } else if (leftKey && paddle.x > 0 && BallMoved) {
         paddle.x -= paddle.dx;
     }
-};
+}
 
 function keydownHandler(event) {
     if(event.keyCode === 13){
@@ -102,7 +116,7 @@ function keydownHandler(event) {
     } else if (event.keyCode === 37) {
         leftKey = true;
     }
-};
+}
 
 function keyupHandler(event) {
     if (event.keyCode === 39) {
@@ -110,7 +124,7 @@ function keyupHandler(event) {
     } else if (event.keyCode === 37) {
         leftKey = false;
     }
-};
+}
 
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -125,6 +139,7 @@ function update(){
         moveBall();
     }
     ballWallCollision();
+    ballPaddleCollision();
 }
 
 function loop() {
