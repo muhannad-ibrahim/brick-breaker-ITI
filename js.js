@@ -16,109 +16,8 @@ let LIFE = 3;
 const img = new Image();
 img.src = "/media/BG.jpg";
 
-
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
-
-const paddle = {
-    width: PADDLE_WIDTH,
-    height: PADDLE_HEIGHT,
-    x: (canvas.width - PADDLE_WIDTH) / 2,
-    y: canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM,
-    dx: PADDLE_dX
-};
-
-const ball = {
-    r: BALL_RADIUS,
-    x: canvas.width / 2,
-    y: paddle.y - BALL_RADIUS,
-    dx: BALL_dX,
-    dy: BALL_dY,
-    speed: SPEED_PER_UNIT_TIME
-};
-
-function drawPaddle() {
-    ctx.fillStyle = "black";
-    ctx.lineWidth = "3"
-    ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-    ctx.strokeStyle = "yellow"
-    ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
-}
-
-function drawBall() {
-    ctx.beginPath();
-    ctx.fillStyle = "red";
-    ctx.lineWidth = "3"
-    ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.strokeStyle = "black";
-    ctx.stroke();
-}
-
-function resetBall(){
-    ball.x = canvas.width / 2;
-    ball.y = paddle.y - BALL_RADIUS;
-    ball.dx = 3 * (Math.random()*2 -1);
-    ball.dy = -3;
-}
-
-function moveBall(){
-    BallMoved = true;
-    ball.x += ball.dx;
-    ball.y += ball.dy;
-}
-
-function ballWallCollision(){
-    if (ball.x + ball.r > canvas.width || ball.x - ball.r < 0){
-        ball.dx = - ball.dx;
-    }
-    else if (ball.y - ball.r < 0){
-        ball.dy = -ball.dy;
-    }
-    else if (ball.y + ball.r > canvas.height){
-        LIFE--;
-        resetBall();
-    }
-}
-
-function ballPaddleCollision() {
-    if (ball.y > paddle.y && ball.y < paddle.y + paddle.height &&
-        ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
-            let collisionPointGradient = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
-            let collisionAngle = collisionPointGradient * Math.PI / 3; 
-            ball.dx = ball.speed * Math.sin(collisionAngle);
-            ball.dy = -ball.speed * Math.cos(collisionAngle);
-        }
-}
-
-
-function movePaddle() {
-    if (rightKey && paddle.x + paddle.width < canvas.width && !BallMoved) {
-        paddle.x += paddle.dx;
-        ball.x += paddle.dx;
-    } else if (leftKey && paddle.x > 0 && !BallMoved) {
-        paddle.x -= paddle.dx;
-        ball.x -= paddle.dx;
-    }
-    if (rightKey && paddle.x + paddle.width < canvas.width && BallMoved) {
-        paddle.x += paddle.dx;
-    } else if (leftKey && paddle.x > 0 && BallMoved) {
-        paddle.x -= paddle.dx;
-    }
-}
-
-function keydownHandler(event) {
-    if(event.keyCode === 13){
-        enterKey = true;
-    }
-    if (event.keyCode === 39) {
-        rightKey = true;
-    } else if (event.keyCode === 37) {
-        leftKey = true;
-    }
-}
-
-var bricks = [] ;
 const brick = {
 
     width   :55,
@@ -130,6 +29,13 @@ const brick = {
  cols       :5
 
 }
+
+var bricks = [] ;
+
+
+
+
+
 function createBrikersHandler (){
      let color;
  for(i=0 ; i<brick.rows ; i++){
@@ -162,6 +68,15 @@ function createBrikersHandler (){
  }
 }
 
+function ballPaddleCollision() {
+    if (ball.y > paddle.y && ball.y < paddle.y + paddle.height &&
+        ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+            let collisionPointGradient = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
+            let collisionAngle = collisionPointGradient * Math.PI / 3; 
+            ball.dx = ball.speed * Math.sin(collisionAngle);
+            ball.dy = -ball.speed * Math.cos(collisionAngle);
+        }
+}
 
 function drawbricks(){
     
@@ -189,13 +104,104 @@ function drawbricks(){
 }}
 
 
+
+
+
+
+const paddle = {
+    width: PADDLE_WIDTH,
+    height: PADDLE_HEIGHT,
+    x: (canvas.width - PADDLE_WIDTH) / 2,
+    y: canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM,
+    dx: PADDLE_dX
+};
+
+const ball = {
+    r: BALL_RADIUS,
+    x: canvas.width / 2,
+    y: paddle.y - BALL_RADIUS,
+    dx: 3,
+    dy: -3,
+};
+
+function drawPaddle() {
+    ctx.fillStyle = "black";
+    ctx.lineWidth = "3"
+    ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    ctx.strokeStyle = "yellow"
+    ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
+};
+
+function drawBall() {
+    ctx.beginPath();
+    ctx.fillStyle = "red";
+    ctx.lineWidth = "3"
+    ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+};
+
+function resetBall(){
+    ball.x = canvas.width / 2;
+    ball.y = paddle.y - BALL_RADIUS;
+    ball.dx = 3 * (Math.random()*2 -1);
+    ball.dy = -3;
+}
+
+function moveBall(){
+    BallMoved = true;
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+}
+
+function ballWallCollision(){
+    if(ball.x + ball.r > canvas.width || ball.x - ball.r < 0){
+        ball.dx = - ball.dx;
+    }
+    else if(ball.y - ball.r < 0){
+        ball.dy = -ball.dy;
+    }
+    else if(ball.y + ball.r > canvas.height){
+        LIFE--;
+        resetBall();
+    }
+};
+
+
+function movePaddle() {
+    if (rightKey && paddle.x + paddle.width < canvas.width && !BallMoved) {
+        paddle.x += paddle.dx;
+        ball.x += paddle.dx;
+    } else if (leftKey && paddle.x > 0 && !BallMoved) {
+        paddle.x -= paddle.dx;
+        ball.x -= paddle.dx;
+    }
+    if (rightKey && paddle.x + paddle.width < canvas.width && BallMoved) {
+        paddle.x += paddle.dx;
+    } else if (leftKey && paddle.x > 0 && BallMoved) {
+        paddle.x -= paddle.dx;
+    }
+};
+
+function keydownHandler(event) {
+    if(event.keyCode === 13){
+        enterKey = true;
+    }
+    if (event.keyCode === 39) {
+        rightKey = true;
+    } else if (event.keyCode === 37) {
+        leftKey = true;
+    }
+};
+
 function keyupHandler(event) {
     if (event.keyCode === 39) {
         rightKey = false;
     } else if (event.keyCode === 37) {
         leftKey = false;
     }
-}
+};
 
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -204,6 +210,7 @@ function draw(){
     drawBall();
     createBrikersHandler ()
     drawbricks()
+
 }
 
 function update(){
