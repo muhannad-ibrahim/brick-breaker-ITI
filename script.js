@@ -22,8 +22,8 @@ const brick = {
  offsettop  :20,
  margintop  :40,
  offsetleft :20,
- rows        :4,
- cols       :11
+ rows        :3,
+ cols       :7
 }
 const Scr_img = new Image();
 Scr_img.src = "/media/Star_image.png";
