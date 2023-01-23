@@ -12,13 +12,17 @@ let rightKey = false;
 let leftKey = false;
 let enterKey = false;
 let BallMoved = false;
-let LIFE = 3;
 const img = new Image();
 img.src = "/media/BG.jpg";
 const Scr_img = new Image();
 Scr_img.src = "/media/Star_image.png";
 let Score =0;
 const ScoreUnit=10;
+let LIFE = 3;
+const life_img = new Image();
+life_img.src = "/media/heart_image.png";
+let Game_Over=0;
+
 
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
@@ -80,6 +84,7 @@ function ballWallCollision(){
     }
     else if (ball.y + ball.r > canvas.height){
         LIFE--;
+        // console.log(LIFE)
         resetBall();
     }
 }
@@ -210,6 +215,13 @@ function ballBrickCollision(){
     }
     drawbricks()
 }
+//======== Game over====//
+function GameOver(){
+    if(LIFE<=0)
+    {
+        Game_Over=1;
+    }
+}
 // ===========================================//
 //================ game status============//
 function GameStatus(text,textx,texty,img,imgx,imgy){
@@ -217,7 +229,7 @@ ctx.fillStyle="white";
 ctx.font="25px"
 ctx.fillText(text,textx,texty);
 
-ctx.drawImage(img,imgx,imgy,width=25,height=25);
+ctx.drawImage(img,imgx,imgy,width=30,height=30);
 
 }
 
@@ -236,7 +248,8 @@ function draw(){
     drawPaddle();
     drawBall();
     drawbricks();
-    GameStatus(Score, 35 , 25 ,Scr_img,5,5);
+    GameStatus(Score, 60 , 25 ,Scr_img,10,5);
+    GameStatus(LIFE, 370 , 25 ,life_img, 320 ,5);
 
 }
 
@@ -248,13 +261,14 @@ function update(){
     ballWallCollision();
     ballPaddleCollision();
     ballBrickCollision();
-    
+    GameOver();
     
 }
 
 function loop() {
     draw();
     update();
-    requestAnimationFrame(loop);
+    if(!Game_Over){
+    requestAnimationFrame(loop);}
 }
 loop()
