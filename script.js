@@ -226,7 +226,7 @@ function GameOver(){
 //================ game status============//
 function GameStatus(text,textx,texty,img,imgx,imgy){
 ctx.fillStyle="white";
-ctx.font="25px"
+ctx.font="25px Arail"
 ctx.fillText(text,textx,texty);
 
 ctx.drawImage(img,imgx,imgy,width=30,height=30);
@@ -248,8 +248,8 @@ function draw(){
     drawPaddle();
     drawBall();
     drawbricks();
-    GameStatus(Score, 60 , 25 ,Scr_img,10,5);
-    GameStatus(LIFE, 370 , 25 ,life_img, 320 ,5);
+    GameStatus(Score, 60 , 30 ,Scr_img,10,5);
+    GameStatus(LIFE, 370 , 30 ,life_img, 320 ,5);
 
 }
 
