@@ -148,7 +148,6 @@ function createBrikersHandler() {
     let color;
     for (let i = 0; i < brick.rows; i++) {
         bricks[i] = [];
-
         for (let j = 0; j < brick.cols; j++) {
             if (i == 0) {
                 color = `rgba(0,0,255,1)`
