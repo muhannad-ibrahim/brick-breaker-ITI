@@ -20,13 +20,13 @@ let enterKey = false;
 let BallMoved = false;
 
 const img = new Image();
-img.src = "/media/BG.jpg";
+img.src = "./media/BG.jpg";
 
 const Scr_img = new Image();
-Scr_img.src = "/media/Star_image.png";
+Scr_img.src = "./media/Star_image.png";
 
 const life_img = new Image();
-life_img.src = "/media/heart_image.png";
+life_img.src = "./media/heart_image.png";
 
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
@@ -272,3 +272,4 @@ modalElt.addEventListener("click", function() {
     modalElt.classList.add("hidden");  
     loop();
 });
+
