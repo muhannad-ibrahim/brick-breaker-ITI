@@ -15,6 +15,8 @@ let BallMoved = false;
 let LIFE = 3;
 const img = new Image();
 img.src = "/media/BG.jpg";
+const Scr_img = new Image();
+Scr_img.src = "/media/Star_image.png";
 let Score =0;
 const ScoreUnit=10;
 
@@ -171,24 +173,6 @@ function drawbricks(){
     
     for(i=0 ; i<brick.rows ; i++){
         for(j=0; j<brick.cols ; j++){
-// console.log(i);
-// console.log(j);
-// console.log(bricks[i][j].status);
-
-
-        // if(bricks[i][j].status<2){
-
-        //     if(bricks[i][j].status==1){
-        //             bricks[i][j].color= "lightgray"
-        //             }
-
-        //             ctx.beginPath();
-        //             ctx.fillStyle = bricks[i][j].color;
-        //             ctx.lineWidth = "3"
-        //             ctx.strokeStyle="white" 
-        //             ctx.strokeRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)
-        //             ctx.fillRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)  
-        //     }
     
         if(bricks[i][j].status==1){
 
@@ -226,6 +210,17 @@ function ballBrickCollision(){
     }
     drawbricks()
 }
+// ===========================================//
+//================ game status============//
+function GameStatus(text,textx,texty,img,imgx,imgy){
+ctx.fillStyle="white";
+ctx.font="25px"
+ctx.fillText(text,textx,texty);
+
+ctx.drawImage(img,imgx,imgy,width=25,height=25);
+
+}
+
 
 function keyupHandler(event) {
     if (event.keyCode === 39) {
@@ -240,8 +235,9 @@ function draw(){
     ctx.drawImage(img, 0, 0, 400, 500);
     drawPaddle();
     drawBall();
-   
-    drawbricks()
+    drawbricks();
+    GameStatus(Score, 35 , 25 ,Scr_img,5,5);
+
 }
 
 function update(){
