@@ -14,6 +14,17 @@ let enterKey = false;
 let BallMoved = false;
 const img = new Image();
 img.src = "/media/BG.jpg";
+var bricks = [] ;
+const brick = {
+
+    width   :55,
+    height  :20,
+ offsettop  :20,
+ margintop  :40,
+ offsetleft :20,
+ rows        :4,
+ cols       :11
+}
 const Scr_img = new Image();
 Scr_img.src = "/media/Star_image.png";
 let Score =0;
@@ -22,7 +33,6 @@ let LIFE = 3;
 const life_img = new Image();
 life_img.src = "/media/heart_image.png";
 let Game_Over=0;
-
 
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
@@ -126,18 +136,7 @@ function keydownHandler(event) {
     }
 }
 
-var bricks = [] ;
-const brick = {
 
-    width   :55,
-    height  :20,
- offsettop  :20,
- margintop  :40,
- offsetleft :20,
- rows        :4,
- cols       :5
-
-}
 function createBrikersHandler (){
      let color;
  for( let i=0 ; i<brick.rows ; i++){
@@ -145,16 +144,16 @@ function createBrikersHandler (){
 
     for(let j=0; j<brick.cols ; j++){
         if(i==0){
-          color = "blue"
+          color = `rgba(0,0,255,1)`
         }
         else if( i==1){
-            color="green"
+            color=`rgba(100,255,190,1)`
         }
         else if(i==2){
-         color="yellow"   
+         color=`rgba(255,255,0,1)`   
         }
         else{
-            color="red"    
+            color=`rgba(255,0,0,1)`   
         } 
 
         
@@ -164,50 +163,66 @@ function createBrikersHandler (){
            bricks[i][j] = { 
             xpos:x,
             ypos:y,
-            status:1
+            status:2
             ,color:color
         };
     }
  }
 } 
 createBrikersHandler ()
-// createBrikersHandler ();
+
 
 
 function drawbricks(){
     
     for(i=0 ; i<brick.rows ; i++){
         for(j=0; j<brick.cols ; j++){
-    
-        if(bricks[i][j].status==1){
 
+
+
+
+
+        if(bricks[i][j].status>=1){
+
+            if(bricks[i][j].status==1){
+                    bricks[i][j].color= `#FFC3A1`
+                    }
                     ctx.beginPath();
                     ctx.fillStyle = bricks[i][j].color;
                     ctx.lineWidth = "3"
                     ctx.strokeStyle="white" 
                     ctx.strokeRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)
-                    ctx.fillRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)  }
 
-    }
+                    ctx.fillRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)  
+            }
+    
+       
+
+
+    }}
    
-}}
+}
 
 //=========================Ball's brick_collision==============//
+
 
 function ballBrickCollision(){
     for(i=0 ; i<brick.rows ; i++){
         for(j=0; j<brick.cols ; j++){
 
-            if(bricks[i][j].status==1){
+
+            if(bricks[i][j].status>=1){
+
+          
+
 
                 if(ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
                 &&ball.y+ ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height)
                {
-                bricks[i][j].status = 0;
-                // console.log(bricks[i][j].status);
+
+                bricks[i][j].status = bricks[i][j].status -1;
                 ball.dy= - ball.dy;
                Score += ScoreUnit;
-               console.log(Score);
                 }
           }
         }
@@ -215,6 +230,7 @@ function ballBrickCollision(){
     }
     drawbricks()
 }
+
 //======== Game over====//
 function GameOver(){
     if(LIFE<=0)
@@ -244,13 +260,13 @@ function keyupHandler(event) {
 
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, 400, 500);
+    ctx.drawImage(img, 0, 0, 850, 500);
     drawPaddle();
     drawBall();
+
     drawbricks();
     GameStatus(Score, 60 , 30 ,Scr_img,10,5);
-    GameStatus(LIFE, 370 , 30 ,life_img, 320 ,5);
-
+    GameStatus(LIFE, 730 , 30 ,life_img, 700 ,5);
 }
 
 function update(){
@@ -262,6 +278,7 @@ function update(){
     ballPaddleCollision();
     ballBrickCollision();
     GameOver();
+
     
 }
 
@@ -271,4 +288,5 @@ function loop() {
     if(!Game_Over){
     requestAnimationFrame(loop);}
 }
+
 loop()
