@@ -12,11 +12,8 @@ let rightKey = false;
 let leftKey = false;
 let enterKey = false;
 let BallMoved = false;
-let LIFE = 3;
 const img = new Image();
 img.src = "/media/BG.jpg";
-let Score =0;
-const ScoreUnit=10;
 var bricks = [] ;
 const brick = {
 
@@ -27,8 +24,15 @@ const brick = {
  offsetleft :20,
  rows        :4,
  cols       :11
-
 }
+const Scr_img = new Image();
+Scr_img.src = "/media/Star_image.png";
+let Score =0;
+const ScoreUnit=10;
+let LIFE = 3;
+const life_img = new Image();
+life_img.src = "/media/heart_image.png";
+let Game_Over=0;
 
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
@@ -90,6 +94,7 @@ function ballWallCollision(){
     }
     else if (ball.y + ball.r > canvas.height){
         LIFE--;
+        // console.log(LIFE)
         resetBall();
     }
 }
@@ -165,7 +170,7 @@ function createBrikersHandler (){
  }
 } 
 createBrikersHandler ()
-// createBrikersHandler ();
+
 
 
 function drawbricks(){
@@ -176,21 +181,23 @@ function drawbricks(){
 
 
 
+
         if(bricks[i][j].status>=1){
 
             if(bricks[i][j].status==1){
                     bricks[i][j].color= `#FFC3A1`
                     }
-
                     ctx.beginPath();
                     ctx.fillStyle = bricks[i][j].color;
                     ctx.lineWidth = "3"
                     ctx.strokeStyle="white" 
                     ctx.strokeRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)
+
                     ctx.fillRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)  
             }
     
        
+
 
     }}
    
@@ -198,20 +205,24 @@ function drawbricks(){
 
 //=========================Ball's brick_collision==============//
 
+
 function ballBrickCollision(){
     for(i=0 ; i<brick.rows ; i++){
         for(j=0; j<brick.cols ; j++){
 
+
             if(bricks[i][j].status>=1){
+
+          
+
 
                 if(ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
                 &&ball.y+ ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height)
                {
+
                 bricks[i][j].status = bricks[i][j].status -1;
-                // console.log(bricks[i][j].status);
                 ball.dy= - ball.dy;
                Score += ScoreUnit;
-               console.log(Score);
                 }
           }
         }
@@ -219,6 +230,25 @@ function ballBrickCollision(){
     }
     drawbricks()
 }
+
+//======== Game over====//
+function GameOver(){
+    if(LIFE<=0)
+    {
+        Game_Over=1;
+    }
+}
+// ===========================================//
+//================ game status============//
+function GameStatus(text,textx,texty,img,imgx,imgy){
+ctx.fillStyle="white";
+ctx.font="25px Arail"
+ctx.fillText(text,textx,texty);
+
+ctx.drawImage(img,imgx,imgy,width=30,height=30);
+
+}
+
 
 function keyupHandler(event) {
     if (event.keyCode === 39) {
@@ -233,8 +263,10 @@ function draw(){
     ctx.drawImage(img, 0, 0, 850, 500);
     drawPaddle();
     drawBall();
-   
-    drawbricks()
+
+    drawbricks();
+    GameStatus(Score, 60 , 30 ,Scr_img,10,5);
+    GameStatus(LIFE, 730 , 30 ,life_img, 700 ,5);
 }
 
 function update(){
@@ -245,13 +277,16 @@ function update(){
     ballWallCollision();
     ballPaddleCollision();
     ballBrickCollision();
-    
+    GameOver();
+
     
 }
 
 function loop() {
     draw();
     update();
-    requestAnimationFrame(loop);
+    if(!Game_Over){
+    requestAnimationFrame(loop);}
 }
+
 loop()
