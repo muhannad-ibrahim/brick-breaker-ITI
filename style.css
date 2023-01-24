@@ -22,6 +22,17 @@
     letter-spacing: 0.1em;
   }
   
+  #sound{
+    position: fixed;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    top: 620px;
+    left: 37rem;
+    z-index:99;
+    display: none;
+  }
+
   #modal {
     position: absolute;
     top: 50%;

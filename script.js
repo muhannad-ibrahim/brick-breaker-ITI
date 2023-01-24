@@ -1,11 +1,13 @@
 var modalElt = document.getElementById("modal");
 const canvas = document.getElementById("breakOutGame");
+const soundBtn = document.getElementById("sound");
+
 const ctx = canvas.getContext("2d");
 const PADDLE_WIDTH = 120;
 const PADDLE_HEIGHT = 20;
 const MARGIN_BOTTOM = 40;
 const PADDLE_dX = 7;
-const BALL_dX = 3;
+const BALL_dX = 3 * (Math.random() * 2 - 1);
 const BALL_dY = -3;
 const BALL_RADIUS = 10;
 const SPEED_PER_UNIT_TIME = 4;
@@ -16,6 +18,8 @@ let extendWidthPUP = false;
 // let stickyBallPUP = false;
 let shrinkWidthPdown = false;
 let strongBallPUP = false;
+let Level = 1;
+let Max_Level = 3;
 let Game_Over = 0;
 let Score = 0;
 const ScoreUnit = 10;
@@ -25,14 +29,30 @@ let leftKey = false;
 let enterKey = false;
 let BallMoved = false;
 
+const brick_hit = new Audio();
+brick_hit.src = "./sounds/brick_hit.mp3";
+
+const paddle_hit = new Audio();
+paddle_hit.src = "./sounds/paddle_hit.mp3";
+
+const wall = new Audio();
+wall.src = "./sounds/wall.mp3";
+
+const win = new Audio();
+win.src = "./sounds/win.mp3";
+
+
 const img = new Image();
 img.src = "./media/BG.jpg";
 
-const Scr_img = new Image();
-Scr_img.src = "./media/Star_image.png";
+const score_img = new Image();
+score_img.src = "./media/Star_image.png";
 
 const life_img = new Image();
 life_img.src = "./media/heart_image.png";
+
+const level_img = new Image();
+level_img.src = "./media/level.png";
 
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
@@ -45,7 +65,7 @@ const brick = {
     offsettop: 20,
     margintop: 40,
     offsetleft: 20,
-    rows: 3,
+    rows: 1,
     cols: 7
 }
 
@@ -53,7 +73,7 @@ const paddle = {
     width: PADDLE_WIDTH,
     height: PADDLE_HEIGHT,
     x: (canvas.width - PADDLE_WIDTH) / 2,
-    y: canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM,
+    y: canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM -10,
     dx: PADDLE_dX
 };
 
@@ -121,19 +141,26 @@ function moveBall() {
 function ballWallCollision() {
     if (ball.x + ball.r > canvas.width || ball.x - ball.r < 0) {
         ball.dx = - ball.dx;
+        wall.play();
     }
     else if (ball.y - ball.r < 0) {
         ball.dy = -ball.dy;
+        wall.play();
     }
     else if (ball.y + ball.r > canvas.height) {
         LIFE--;
         resetBall();
+    }
+    else if(ball.dx === 0){
+        resetBall();
+        wall.play();
     }
 }
 
 function ballPaddleCollision() {
     if (ball.y + ball.r > paddle.y && ball.y - ball.r < paddle.y + paddle.height &&
         ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+            paddle_hit.play();
             let collisionPointGradient = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
             let collisionAngle = collisionPointGradient * Math.PI / 3;
             ball.dx = ball.speed * Math.sin(collisionAngle);
@@ -239,6 +266,7 @@ function createBrikersHandler() {
         }
     }
 }
+
 createBrikersHandler()
 
 function drawbricks() {
@@ -267,6 +295,7 @@ function ballBrickCollision() {
             if (bricks[i][j].status >= 1) {
                 if (ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
                     && ball.y + ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height) {
+                  brick_hit.play();
                   if (Math.random() < POWERUP_PROBABILITY) {
                       var pupX = bricks[i][j].xpos + brick.width / 2;
                       var pupY = bricks[i][j].ypos + brick.height / 2;
@@ -292,22 +321,45 @@ function ballBrickCollision() {
 }
 
 //======== Game over====//
-function GameOver() {
+function gameOver() {
     if (LIFE <= 0) {
         Game_Over = 1;
         /* to show game over message */
         ctx.fillStyle = "red";
         ctx.font = "80px Arail"
-        ctx.fillText("Game Over", 90,300);
+        ctx.fillText("Game Over", 280,300);
     }
 }
 // ===========================================//
 //================ game status============//
-function GameStatus(text, textx, texty, img, imgx, imgy) {
+function gameStatus(text, textx, texty, img, imgx, imgy) {
     ctx.fillStyle = "white";
     ctx.font = "25px Arail"
     ctx.fillText(text, textx, texty);
     ctx.drawImage(img, imgx, imgy, width = 30, height = 30);
+}
+
+function levelUp(){
+    let isLevelFinished = true;
+    for (let i = 0; i < brick.rows; i++) {
+        for (let j = 0; j < brick.cols; j++) {
+            isLevelFinished = isLevelFinished && !bricks[i][j].status;
+        }
+    }
+    if(isLevelFinished){
+        if(Level >= Max_Level){
+            win.play();
+            Game_Over = true;
+            return;
+        }
+        brick.rows++;
+        createBrikersHandler();
+        ball.speed += 0.5;
+        resetBall();
+        Level++;
+
+    }
+
 }
 
 function keyupHandler(event) {
@@ -325,8 +377,9 @@ function draw() {
     drawPaddle();
     drawBall();
     drawbricks();
-    GameStatus(Score, 60 , 30 ,Scr_img,10,5);
-    GameStatus(LIFE, 510, 30, life_img, 460, 5);
+    gameStatus(Score, 60 , 30 ,score_img,10,5);
+    gameStatus(LIFE, 510, 30, life_img, 460, 5);
+    gameStatus(Level, 300, 30, level_img, 250, 5);
 }
 
 function drawPups() {
@@ -358,7 +411,8 @@ function update() {
     ballBrickCollision();
     movePowerUps();
     powerUpsPaddleCollision();
-    GameOver(); 
+    gameOver(); 
+    levelUp();
 }
 
 function loop() {
@@ -370,7 +424,19 @@ function loop() {
 }
 
 modalElt.addEventListener("click", function() {
-    modalElt.classList.add("hidden");  
+    modalElt.classList.add("hidden");
+    document.getElementById("sound").style.display = "flex";
     loop();
 });
 
+soundBtn.addEventListener('click',function(){
+    let imgSrc = soundBtn.getAttribute("src");
+    let soundImg = imgSrc == "./media/SOUND_ON.png" ? "./media/SOUND_OFF.png" : "./media/SOUND_ON.png" ;
+    soundBtn.setAttribute("src",soundImg);
+
+    brick_hit.muted = brick_hit.muted ? false : true;
+    paddle_hit.muted = paddle_hit.muted ? false : true;
+    wall.muted = wall.muted ? false : true;
+    win.muted = win.muted ? false : true;
+
+});
