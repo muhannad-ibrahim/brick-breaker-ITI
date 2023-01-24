@@ -1,37 +1,52 @@
+var modalElt = document.getElementById("modal");
 const canvas = document.getElementById("breakOutGame");
 const ctx = canvas.getContext("2d");
-const PADDLE_WIDTH = 90;
+const PADDLE_WIDTH = 120;
 const PADDLE_HEIGHT = 20;
 const MARGIN_BOTTOM = 40;
 const PADDLE_dX = 7;
 const BALL_dX = 3;
 const BALL_dY = -3;
 const BALL_RADIUS = 10;
-const SPEED_PER_UNIT_TIME = 5;
+const SPEED_PER_UNIT_TIME = 4;
 const POWERUP_PROBABILITY = 1;
 const POWERUP_SPEED = 0.15;
 let powerUps = [];
 let extendWidthPUP = false;
 let stickyBallPUP = false;
 let strongBallPUP = false;
+let Game_Over = 0;
+let Score = 0;
+const ScoreUnit = 10;
+let LIFE = 3;
 let rightKey = false;
 let leftKey = false;
 let enterKey = false;
 let BallMoved = false;
-const img = new Image();
-img.src = "/media/BG.jpg";
-const Scr_img = new Image();
-Scr_img.src = "/media/Star_image.png";
-let Score =0;
-const ScoreUnit=10;
-let LIFE = 3;
-const life_img = new Image();
-life_img.src = "/media/heart_image.png";
-let Game_Over=0;
 
+const img = new Image();
+img.src = "./media/BG.jpg";
+
+const Scr_img = new Image();
+Scr_img.src = "./media/Star_image.png";
+
+const life_img = new Image();
+life_img.src = "./media/heart_image.png";
 
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
+
+var bricks = [];
+
+const brick = {
+    width: 55,
+    height: 20,
+    offsettop: 20,
+    margintop: 40,
+    offsetleft: 20,
+    rows: 3,
+    cols: 7
+}
 
 const paddle = {
     width: PADDLE_WIDTH,
@@ -84,29 +99,32 @@ function drawBall() {
     ctx.stroke();
 }
 
-function resetBall(){
+function resetBall() {
     ball.x = canvas.width / 2;
     ball.y = paddle.y - BALL_RADIUS;
-    ball.dx = 3 * (Math.random()*2 -1);
+    ball.dx = 3 * (Math.random() * 2 - 1);
     ball.dy = -3;
+
+    paddle.x = (canvas.width - PADDLE_WIDTH) / 2;
+    paddle.y = canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM;
+    paddle.dx = PADDLE_dX ;
 }
 
-function moveBall(){
+function moveBall() {
     BallMoved = true;
     ball.x += ball.dx;
     ball.y += ball.dy;
 }
 
-function ballWallCollision(){
-    if (ball.x + ball.r > canvas.width || ball.x - ball.r < 0){
+function ballWallCollision() {
+    if (ball.x + ball.r > canvas.width || ball.x - ball.r < 0) {
         ball.dx = - ball.dx;
     }
-    else if (ball.y - ball.r < 0){
+    else if (ball.y - ball.r < 0) {
         ball.dy = -ball.dy;
     }
-    else if (ball.y + ball.r > canvas.height){
+    else if (ball.y + ball.r > canvas.height) {
         LIFE--;
-        // console.log(LIFE)
         resetBall();
     }
 }
@@ -154,7 +172,6 @@ function powerUpsPaddleCollision() {
     }
 }
 
-
 function movePaddle() {
     if (rightKey && paddle.x + paddle.width < canvas.width && !BallMoved) {
         paddle.x += paddle.dx;
@@ -171,7 +188,7 @@ function movePaddle() {
 }
 
 function keydownHandler(event) {
-    if(event.keyCode === 13){
+    if (event.keyCode === 13) {
         enterKey = true;
     }
     if (event.keyCode === 39) {
@@ -181,123 +198,100 @@ function keydownHandler(event) {
     }
 }
 
-var bricks = [] ;
-const brick = {
+function createBrikersHandler() {
+    let color;
+    for (let i = 0; i < brick.rows; i++) {
+        bricks[i] = [];
+        for (let j = 0; j < brick.cols; j++) {
+            if (i == 0) {
+                color = `rgba(0,0,255,1)`
+            }
+            else if (i == 1) {
+                color = `rgba(100,255,190,1)`
+            }
+            else if (i == 2) {
+                color = `rgba(255,255,0,1)`
+            }
+            else {
+                color = `rgba(255,0,0,1)`
+            }
 
-    width   :55,
-    height  :20,
- offsettop  :20,
- margintop  :40,
- offsetleft :20,
- rows        :4,
- cols       :5
-
+            let x = j * (brick.offsetleft + brick.width) + brick.offsetleft;
+            let y = i * (brick.offsettop + brick.height) + brick.margintop + brick.offsettop
+            bricks[i][j] = {
+                xpos: x,
+                ypos: y,
+                status: 2,
+                color: color
+            };
+        }
+    }
 }
-function createBrikersHandler (){
-     let color;
- for( let i=0 ; i<brick.rows ; i++){
-   bricks[i] =[];
+createBrikersHandler()
 
-    for(let j=0; j<brick.cols ; j++){
-        if(i==0){
-          color = "blue"
+function drawbricks() {
+    for (i = 0; i < brick.rows; i++) {
+        for (j = 0; j < brick.cols; j++) {
+            if (bricks[i][j].status >= 1) {
+                if (bricks[i][j].status == 1) {
+                    bricks[i][j].color = `#FFC3A1`
+                }
+                ctx.beginPath();
+                ctx.fillStyle = bricks[i][j].color;
+                ctx.lineWidth = "3"
+                ctx.strokeStyle = "white"
+                ctx.strokeRect(bricks[i][j].xpos, bricks[i][j].ypos, brick.width, brick.height)
+                ctx.fillRect(bricks[i][j].xpos, bricks[i][j].ypos, brick.width, brick.height)
+            }
         }
-        else if( i==1){
-            color="green"
-        }
-        else if(i==2){
-         color="yellow"   
-        }
-        else{
-            color="red"    
-        } 
-
-        
-        let  x = j * (brick.offsetleft+brick.width)+brick.offsetleft;
-        
-        let  y = i * (brick.offsettop+brick.height)+brick.margintop+brick.offsettop
-           bricks[i][j] = { 
-            xpos:x,
-            ypos:y,
-            status:1
-            ,color:color
-        };
     }
- }
-} 
-createBrikersHandler ()
-// createBrikersHandler ();
-
-
-function drawbricks(){
-    
-    for(i=0 ; i<brick.rows ; i++){
-        for(j=0; j<brick.cols ; j++){
-    
-        if(bricks[i][j].status==1){
-
-                    ctx.beginPath();
-                    ctx.fillStyle = bricks[i][j].color;
-                    ctx.lineWidth = "3"
-                    ctx.strokeStyle="white" 
-                    ctx.strokeRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)
-                    ctx.fillRect(bricks[i][j].xpos,bricks[i][j].ypos,brick.width,brick.height)  }
-
-    }
-   
-}}
+}
 
 //=========================Ball's brick_collision==============//
 
-function ballBrickCollision(){
-    for(i=0 ; i<brick.rows ; i++){
-        for(j=0; j<brick.cols ; j++){
-
-            if(bricks[i][j].status==1){
-
-                if(ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
-                &&ball.y+ ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height)
-               {
-
-                if (Math.random() < POWERUP_PROBABILITY) {
-                    var pupX = bricks[i][j].xpos + brick.width / 2;
-                    var pupY = bricks[i][j].ypos + brick.height / 2;
-                    var pupSize = brick.width / 2;
-                    var pupType = Object.keys(PowerUpTypes);
-                    var pupSelected = pupType[Math.floor(Math.random() * pupType.length)];
-                    powerUps.push(new PowerUp(pupX, pupY, pupSize, PowerUpTypes[pupSelected])); 
+function ballBrickCollision() {
+    for (i = 0; i < brick.rows; i++) {
+        for (j = 0; j < brick.cols; j++) {
+            if (bricks[i][j].status >= 1) {
+                if (ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
+                    && ball.y + ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height) {
+                  if (Math.random() < POWERUP_PROBABILITY) {
+                      var pupX = bricks[i][j].xpos + brick.width / 2;
+                      var pupY = bricks[i][j].ypos + brick.height / 2;
+                      var pupSize = brick.width / 2;
+                      var pupType = Object.keys(PowerUpTypes);
+                      var pupSelected = pupType[Math.floor(Math.random() * pupType.length)];
+                      powerUps.push(new PowerUp(pupX, pupY, pupSize, PowerUpTypes[pupSelected])); 
+                  }
+                   bricks[i][j].status = bricks[i][j].status - 1;
+                   ball.dy= - ball.dy;
+                   Score += ScoreUnit;
                 }
-                bricks[i][j].status = 0;
-                // console.log(bricks[i][j].status);
-                ball.dy= - ball.dy;
-               Score += ScoreUnit;
-               console.log(Score);
-                }
-          }
+            }
         }
-  
+
     }
     drawbricks()
 }
 
 //======== Game over====//
-function GameOver(){
-    if(LIFE<=0)
-    {
-        Game_Over=1;
+function GameOver() {
+    if (LIFE <= 0) {
+        Game_Over = 1;
+        /* to show game over message */
+        ctx.fillStyle = "red";
+        ctx.font = "80px Arail"
+        ctx.fillText("Game Over", 90,300);
     }
 }
 // ===========================================//
 //================ game status============//
-function GameStatus(text,textx,texty,img,imgx,imgy){
-ctx.fillStyle="white";
-ctx.font="25px Arail"
-ctx.fillText(text,textx,texty);
-
-ctx.drawImage(img,imgx,imgy,width=30,height=30);
-
+function GameStatus(text, textx, texty, img, imgx, imgy) {
+    ctx.fillStyle = "white";
+    ctx.font = "25px Arail"
+    ctx.fillText(text, textx, texty);
+    ctx.drawImage(img, imgx, imgy, width = 30, height = 30);
 }
-
 
 function keyupHandler(event) {
     if (event.keyCode === 39) {
@@ -309,13 +303,13 @@ function keyupHandler(event) {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, 400, 500);
+    ctx.drawImage(img, 0, 0, 850, 500);
     drawPups();
     drawPaddle();
     drawBall();
     drawbricks();
     GameStatus(Score, 60 , 30 ,Scr_img,10,5);
-    GameStatus(LIFE, 370 , 30 ,life_img, 320 ,5);
+    GameStatus(LIFE, 510, 30, life_img, 460, 5);
 }
 
 function drawPups() {
@@ -334,11 +328,12 @@ function movePowerUps() {
     for (let index = 0; index < powerUps.length; index++) {
         powerUps[index].y += powerUps[index].veticalSpeed * 0.5
     }
+    
 }
 
-function update(){
+function update() {
     movePaddle();
-    if(enterKey){
+    if (enterKey) {
         moveBall();
     }
     ballWallCollision();
@@ -352,7 +347,13 @@ function update(){
 function loop() {
     draw();
     update();
-    if(!Game_Over){
-    requestAnimationFrame(loop);}
+    if (!Game_Over) {
+        requestAnimationFrame(loop);
+    }
 }
-loop()
+
+modalElt.addEventListener("click", function() {
+    modalElt.classList.add("hidden");  
+    loop();
+});
+
