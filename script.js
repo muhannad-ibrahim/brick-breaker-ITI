@@ -9,11 +9,16 @@ const BALL_dX = 3;
 const BALL_dY = -3;
 const BALL_RADIUS = 10;
 const SPEED_PER_UNIT_TIME = 4;
+const POWERUP_PROBABILITY = 1;
+const POWERUP_SPEED = 0.15;
+let powerUps = [];
+let extendWidthPUP = false;
+let stickyBallPUP = false;
+let strongBallPUP = false;
 let Game_Over = 0;
 let Score = 0;
 const ScoreUnit = 10;
 let LIFE = 3;
-
 let rightKey = false;
 let leftKey = false;
 let enterKey = false;
@@ -60,6 +65,22 @@ const ball = {
     speed: SPEED_PER_UNIT_TIME
 };
 
+function PowerUp(x, y, size, type) {
+    this.width = size;
+    this.height = size;
+    this.x = x;
+    this.y = y;
+    this.type = type;
+    this.veticalSpeed = POWERUP_SPEED * this.height;   
+}
+
+const PowerUpTypes = {
+    extendWidth: {color: "red", symbol: "-"},
+    increaseLife: {color: "blue", symbol: "+"},
+    stickyBall: {color:"yellow", symbol: "---"},
+    strongBall: {color: "black", symbol: "*"}
+};
+
 function drawPaddle() {
     ctx.fillStyle = "black";
     ctx.lineWidth = "3"
@@ -70,7 +91,7 @@ function drawPaddle() {
 
 function drawBall() {
     ctx.beginPath();
-    ctx.fillStyle = "red";
+    ctx.fillStyle = strongBallPUP ? "yellow" :"red";
     ctx.lineWidth = "3"
     ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
     ctx.fill();
@@ -109,12 +130,45 @@ function ballWallCollision() {
 }
 
 function ballPaddleCollision() {
-    if (ball.y > paddle.y && ball.y < paddle.y + paddle.height &&
+    if (ball.y + ball.r > paddle.y && ball.y - ball.r < paddle.y + paddle.height &&
         ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
-        let collisionPointGradient = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
-        let collisionAngle = collisionPointGradient * Math.PI / 3;
-        ball.dx = ball.speed * Math.sin(collisionAngle);
-        ball.dy = -ball.speed * Math.cos(collisionAngle);
+            let collisionPointGradient = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
+            let collisionAngle = collisionPointGradient * Math.PI / 3;
+            ball.dx = ball.speed * Math.sin(collisionAngle);
+            ball.dy = -ball.speed * Math.cos(collisionAngle);
+        }
+}
+
+function powerUpsPaddleCollision() {
+    for (let i = 0; i < powerUps.length; i++) {
+        if (powerUps[i].x + powerUps[i].width / 2 > paddle.x &&
+            powerUps[i].x - powerUps[i].width / 2 < paddle.x + paddle.width &&
+            powerUps[i].y + powerUps[i].height / 2 > paddle.y &&
+            powerUps[i].y - powerUps[i].height / 2 < paddle.y + paddle.height) {
+                switch(powerUps[i].type) {
+                    case PowerUpTypes.extendWidth:
+                        if (!extendWidthPUP) {
+                            extendWidthPUP = true;
+                            paddle.width *= 1.5;
+                            break;
+                        }
+                    case PowerUpTypes.stickyBall:
+                        if (!stickyBallPUP) {
+                            stickyBallPUP = true;
+                            break;
+                        }
+                    case PowerUpTypes.increaseLife:
+                        LIFE ++;
+                        break;
+                    case PowerUpTypes.strongBall:
+                        if (!strongBallPUP) {
+                            strongBallPUP = true;
+
+                            break;
+                        }
+                }
+                powerUps.splice(i, 1);
+            }      
     }
 }
 
@@ -201,9 +255,17 @@ function ballBrickCollision() {
             if (bricks[i][j].status >= 1) {
                 if (ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
                     && ball.y + ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height) {
-                    bricks[i][j].status = bricks[i][j].status - 1;
-                    ball.dy = - ball.dy;
-                    Score += ScoreUnit;
+                  if (Math.random() < POWERUP_PROBABILITY) {
+                      var pupX = bricks[i][j].xpos + brick.width / 2;
+                      var pupY = bricks[i][j].ypos + brick.height / 2;
+                      var pupSize = brick.width / 2;
+                      var pupType = Object.keys(PowerUpTypes);
+                      var pupSelected = pupType[Math.floor(Math.random() * pupType.length)];
+                      powerUps.push(new PowerUp(pupX, pupY, pupSize, PowerUpTypes[pupSelected])); 
+                  }
+                   bricks[i][j].status = bricks[i][j].status - 1;
+                   ball.dy= - ball.dy;
+                   Score += ScoreUnit;
                 }
             }
         }
@@ -242,11 +304,31 @@ function keyupHandler(event) {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0, 850, 500);
+    drawPups();
     drawPaddle();
     drawBall();
     drawbricks();
-    GameStatus(Score, 60, 30, Scr_img, 10, 5);
+    GameStatus(Score, 60 , 30 ,Scr_img,10,5);
     GameStatus(LIFE, 510, 30, life_img, 460, 5);
+}
+
+function drawPups() {
+    ctx.lineWidth = "4";
+    for (const pup of powerUps) {
+        ctx.beginPath()
+        ctx.fillStyle = pup.type.color;
+        ctx.strokeStyle = pup.type.color;
+        ctx.strokeRect(pup.x - pup.width * 0.5, pup.y - pup.height * 0.5, pup.width, pup.height);
+        ctx.textAlign = "center";
+        ctx.fillText(pup.type.symbol, pup.x, pup.y);
+    }
+}
+
+function movePowerUps() {
+    for (let index = 0; index < powerUps.length; index++) {
+        powerUps[index].y += powerUps[index].veticalSpeed * 0.5
+    }
+    
 }
 
 function update() {
@@ -257,7 +339,9 @@ function update() {
     ballWallCollision();
     ballPaddleCollision();
     ballBrickCollision();
-    GameOver();
+    movePowerUps();
+    powerUpsPaddleCollision();
+    GameOver(); 
 }
 
 function loop() {
