@@ -9,11 +9,12 @@ const BALL_dX = 3;
 const BALL_dY = -3;
 const BALL_RADIUS = 10;
 const SPEED_PER_UNIT_TIME = 4;
-const POWERUP_PROBABILITY = 1;
+const POWERUP_PROBABILITY = 0.3;
 const POWERUP_SPEED = 0.15;
 let powerUps = [];
 let extendWidthPUP = false;
-let stickyBallPUP = false;
+// let stickyBallPUP = false;
+let shrinkWidthPdown = false;
 let strongBallPUP = false;
 let Game_Over = 0;
 let Score = 0;
@@ -75,10 +76,11 @@ function PowerUp(x, y, size, type) {
 }
 
 const PowerUpTypes = {
-    extendWidth: {color: "red", symbol: "-"},
-    increaseLife: {color: "blue", symbol: "+"},
-    stickyBall: {color:"yellow", symbol: "---"},
-    strongBall: {color: "black", symbol: "*"}
+    shrinkWidthPdown: {color: "black", symbol: "><"},
+    increaseLife: {color: "green", symbol: "+"},
+    extendWidthPUP: {color:"white", symbol: "<>"},
+    strongBall: {color: "yellow", symbol: "S"},
+    decreaseLife: {color: "red", symbol: "-"}
 };
 
 function drawPaddle() {
@@ -146,24 +148,34 @@ function powerUpsPaddleCollision() {
             powerUps[i].y + powerUps[i].height / 2 > paddle.y &&
             powerUps[i].y - powerUps[i].height / 2 < paddle.y + paddle.height) {
                 switch(powerUps[i].type) {
-                    case PowerUpTypes.extendWidth:
+                    case PowerUpTypes.extendWidthPUP:
                         if (!extendWidthPUP) {
                             extendWidthPUP = true;
+                            shrinkWidthPdown = false;
                             paddle.width *= 1.5;
                             break;
                         }
-                    case PowerUpTypes.stickyBall:
-                        if (!stickyBallPUP) {
-                            stickyBallPUP = true;
+                    case PowerUpTypes.shrinkWidthPdown:
+                        if (!shrinkWidthPdown) {
+                            shrinkWidthPdown = true;
+                            extendWidthPUP = false;
+                            paddle.width /= 1.5;
                             break;
                         }
+                    // case PowerUpTypes.stickyBall:
+                    //     if (!stickyBallPUP) {
+                    //         stickyBallPUP = true;
+                    //         break;
+                    //     }
                     case PowerUpTypes.increaseLife:
                         LIFE ++;
+                        break;
+                    case PowerUpTypes.decreaseLife:
+                        LIFE --;
                         break;
                     case PowerUpTypes.strongBall:
                         if (!strongBallPUP) {
                             strongBallPUP = true;
-
                             break;
                         }
                 }
@@ -263,9 +275,14 @@ function ballBrickCollision() {
                       var pupSelected = pupType[Math.floor(Math.random() * pupType.length)];
                       powerUps.push(new PowerUp(pupX, pupY, pupSize, PowerUpTypes[pupSelected])); 
                   }
-                   bricks[i][j].status = bricks[i][j].status - 1;
+                  if (strongBallPUP) {
+                    bricks[i][j].status = 0;
+                    Score += ScoreUnit;
+                  } else {
+                    bricks[i][j].status = bricks[i][j].status - 1;
+                    Score += ScoreUnit / 2;
+                  }
                    ball.dy= - ball.dy;
-                   Score += ScoreUnit;
                 }
             }
         }
@@ -320,7 +337,7 @@ function drawPups() {
         ctx.strokeStyle = pup.type.color;
         ctx.strokeRect(pup.x - pup.width * 0.5, pup.y - pup.height * 0.5, pup.width, pup.height);
         ctx.textAlign = "center";
-        ctx.fillText(pup.type.symbol, pup.x, pup.y);
+        ctx.fillText(pup.type.symbol, pup.x, pup.y + pup.height / 4);
     }
 }
 
