@@ -330,6 +330,7 @@ function gameOver() {
         /* to show game over message */
        
          ctx.drawImage(game_over,120,120,300,300);
+ 
     }
 }
 // ===========================================//
@@ -417,9 +418,23 @@ function update() {
     levelUp();
 }
 
+function checkhighscore (){
+
+    if(!localStorage.getItem("highscore")){
+        localStorage.setItem("highscore","0") ;
+    }else{
+        
+        localStorage.setItem("highscore",`${Score}`) ; 
+    }
+
+}
+
+
+
 function loop() {
     draw();
     update();
+    checkhighscore ();
     if (!Game_Over) {
         requestAnimationFrame(loop);
     }
