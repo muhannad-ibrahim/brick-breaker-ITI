@@ -45,12 +45,40 @@ header h1 {
 }
 
 #modal #start {
-  padding: 10px 20px;
-  font-size: 41px;
+  padding: 10px 10px;
+  font-size: 51px;
   color: red;
   border-radius: 20px;
+  font-family:fantasy ;
 
   
+}
+#highscore,#yourscore{
+  width: 220px;
+  height: 80px;
+  position: absolute;
+  z-index: 3;
+  top: 140px;
+  left: 430px;
+  font-size: 35px;
+  text-align: center;
+  padding-top: 20px;
+  color: red;
+  font-family: "Gamja Flower";
+  background-color:rgb(35, 34, 34);
+  text-transform: capitalize;
+  border-radius:20px;
+  border-style:solid;
+  border-color:white;
+
+}
+#highscore span{
+  color:white;
+}
+#yourscore{
+  
+ left:725px;
+ 
 }
 
 #modal:hover #start {
@@ -76,6 +104,7 @@ footer {
   font-size: 30px;
   padding: 30px;
 }
+
 
 footer a {
   text-decoration: none;

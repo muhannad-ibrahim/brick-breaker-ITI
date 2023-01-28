@@ -1,7 +1,10 @@
 var modalElt = document.getElementById("modal");
 const canvas = document.getElementById("breakOutGame");
 const soundBtn = document.getElementById("sound");
-
+const highscoreEle = document.getElementById("highscore");
+const scoreEle = document.getElementById("yourscore");
+const scoreval = document.getElementById("scorevalue");
+const highscoreval = document.getElementById("highvalue");
 const ctx = canvas.getContext("2d");
 const PADDLE_WIDTH = 120;
 const PADDLE_HEIGHT = 20;
@@ -41,7 +44,6 @@ wall.src = "./sounds/wall.mp3";
 const win = new Audio();
 win.src = "./sounds/win.mp3";
 
-
 const img = new Image();
 img.src = "./media/BG.jpg";
 
@@ -56,7 +58,8 @@ level_img.src = "./media/level.png";
 
 const game_over = new Image();
 game_over.src = "./media/game-over.png";
-
+scoreEle.classList.add("hidden")
+highscoreEle.classList.add("hidden")
 document.addEventListener('keydown', keydownHandler);
 document.addEventListener('keyup', keyupHandler);
 
@@ -275,9 +278,12 @@ createBrikersHandler()
 function drawbricks() {
     for (i = 0; i < brick.rows; i++) {
         for (j = 0; j < brick.cols; j++) {
-            if (bricks[i][j].status >= 1) {
+            if (bricks[i][j].status >= 1 || bricks[i][j].status == "solid") {
                 if (bricks[i][j].status == 1) {
                     bricks[i][j].color = `#FFC3A1`
+                }
+                if( bricks[i][j].status == "solid"){
+                    bricks[i][j].color = "darkgray" ;
                 }
                 ctx.beginPath();
                 ctx.fillStyle = bricks[i][j].color;
@@ -295,7 +301,7 @@ function drawbricks() {
 function ballBrickCollision() {
     for (i = 0; i < brick.rows; i++) {
         for (j = 0; j < brick.cols; j++) {
-            if (bricks[i][j].status >= 1) {
+            if (bricks[i][j].status >= 1||bricks[i][j].status=="solid") {
                 if (ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
                     && ball.y + ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height) {
                   brick_hit.play();
@@ -307,6 +313,7 @@ function ballBrickCollision() {
                       var pupSelected = pupType[Math.floor(Math.random() * pupType.length)];
                       powerUps.push(new PowerUp(pupX, pupY, pupSize, PowerUpTypes[pupSelected])); 
                   }
+                  if(bricks[i][j].status != "solid"){
                   if (strongBallPUP) {
                     bricks[i][j].status = 0;
                     Score += ScoreUnit;
@@ -314,8 +321,9 @@ function ballBrickCollision() {
                     bricks[i][j].status = bricks[i][j].status - 1;
                     Score += ScoreUnit / 2;
                   }
+
                    ball.dy= - ball.dy;
-                }
+                }}
             }
         }
 
@@ -328,10 +336,25 @@ function gameOver() {
     if (LIFE <= 0) {
         Game_Over = 1;
         /* to show game over message */
-       
-         ctx.drawImage(game_over,120,120,300,300);
+        scoreHandler ();
+        checkhighscore ();
+       ctx.drawImage(game_over,120,120,300,300);
  
     }
+}
+
+function scoreHandler (){
+    if(game_over){
+
+        scoreEle.classList.remove("hidden")
+       highscoreEle.classList.remove("hidden")
+       highscoreval.innerHTML="";
+       highscoreval.innerHTML=`${localStorage.getItem("highscore")}`
+       scoreval.innerHtml="";
+       scoreval.innerHtml=`${Score}`;
+
+    }
+    
 }
 // ===========================================//
 //================ game status============//
@@ -360,10 +383,66 @@ function levelUp(){
         ball.speed += 0.5;
         resetBall();
         Level++;
+        if( Level==2){
+           freeblocks(brick.rows,0); 
+        }
+        else if(Level==3){
+            freeblocks(brick.rows,"solid"); 
+        }
+
 
     }
 
 }
+
+freeblocks (brick.rows,"solid")
+
+function freeblocks (rows,value){
+
+       let num = Math.random() * (3- 1) + 1;
+    for( i = 0 ; i<rows ; i++){
+
+     
+     let c = num;
+     for( j = 0 ; j<num ; j++){
+       let  rcol = Math.trunc(Math.random() * (6 - 0) + 0);
+        bricks[i][rcol].status = value ;
+       
+    
+        }
+
+     }
+
+     for( i = 0 ; i<rows ; i++){
+        for( j = 0 ; j<num ; j++){
+          if( bricks[i][j].status != value){
+            bricks[i][j].status=2;
+}
+
+if(j>0){
+
+    if(bricks[i][j].status==value&&bricks[i][j-1].status==value){
+        console.log(j);
+        console.log(j-1);
+        console.log("======================");
+        bricks[i][j].status=2; 
+        if((j+1)!=7){
+            bricks[i][j+1].status=value;
+        }
+    }
+}
+
+
+        }} 
+
+    }
+
+   
+
+
+
+
+
 
 function keyupHandler(event) {
     if (event.keyCode === 39) {
@@ -422,12 +501,15 @@ function checkhighscore (){
 
     if(!localStorage.getItem("highscore")){
         localStorage.setItem("highscore","0") ;
-    }else{
-        
+        highscoreval.innerHTML="0";
+    }else if (localStorage.getItem("highscore")<Score){     
         localStorage.setItem("highscore",`${Score}`) ; 
+        highscoreval.innerHTML=`${localStorage.getItem("highscore")}`;
     }
 
 }
+
+
 
 
 
@@ -436,12 +518,15 @@ function loop() {
     update();
     checkhighscore ();
     if (!Game_Over) {
+    
         requestAnimationFrame(loop);
     }
 }
 
 modalElt.addEventListener("click", function() {
     modalElt.classList.add("hidden");
+    highscoreEle.classList.add("hidden")
+    scoreEle.classList.add("hidden")
     document.getElementById("sound").style.display = "flex";
     loop();
 });
