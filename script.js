@@ -302,7 +302,7 @@ function drawbricks() {
 function ballBrickCollision() {
     for (i = 0; i < brick.rows; i++) {
         for (j = 0; j < brick.cols; j++) {
-            if (bricks[i][j].status >= 1||bricks[i][j].status=="solid") {
+            if (bricks[i][j].status >= 1||bricks[i][j].status == "solid") {
                 if (ball.x + ball.r > bricks[i][j].xpos && ball.x - ball.r < bricks[i][j].xpos + brick.width
                     && ball.y + ball.r > bricks[i][j].ypos && ball.y - ball.r < bricks[i][j].ypos + brick.height) {
                   brick_hit.play();
@@ -337,6 +337,8 @@ function gameOver() {
     if (LIFE <= 0) {
         Game_Over = 1;
         /* to show game over message */
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, 850, 500);
         checkhighscore ();
         scoreHandler ();
         ctx.drawImage(game_over,120,120,300,300);
@@ -401,11 +403,9 @@ function freeblocks (rows,value){
 
        let num = Math.random() * (2- 1) + 1;
        solidbricks = num*rows;
-       
+
     for( i = 0 ; i<rows ; i++){
 
-     
-     let c = num;
      for( j = 0 ; j<num ; j++){
        let  rcol = Math.trunc(Math.random() * (6 - 0) + 0);
         bricks[i][rcol].status = value ;
@@ -428,9 +428,9 @@ console.log(bricks[i][j].status);
 if(j>0){
 
     if(bricks[i][j].status==value&&bricks[i][j-1].status==value){
-        // console.log(j);
-        // console.log(j-1);
-        // console.log("======================");
+        console.log(j);
+        console.log(j-1);
+        console.log("======================");
         bricks[i][j].status=2; 
         if((j+1)!=7){
             bricks[i][j+1].status=value;
