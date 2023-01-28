@@ -87,7 +87,7 @@ header h1 {
 }
 
 canvas {
-  background-image: url(media/BG.jpg);
+  /*background-image: url(media/BG.jpg);*/
   background-size: 850px 500px;
   background-repeat: no-repeat;
   margin: auto;
@@ -114,5 +114,8 @@ footer a {
 footer a:hover {
   text-decoration: underline;
   color: yellow;
+}
+#scorevalue{
+  color:white;
 }
 

@@ -18,6 +18,7 @@ const POWERUP_PROBABILITY = 0.3;
 const POWERUP_SPEED = 0.15;
 let powerUps = [];
 let extendWidthPUP = false;
+let solidbricks = 0;
 // let stickyBallPUP = false;
 let shrinkWidthPdown = false;
 let strongBallPUP = false;
@@ -336,9 +337,9 @@ function gameOver() {
     if (LIFE <= 0) {
         Game_Over = 1;
         /* to show game over message */
-        scoreHandler ();
         checkhighscore ();
-       ctx.drawImage(game_over,120,120,300,300);
+        scoreHandler ();
+        ctx.drawImage(game_over,120,120,300,300);
  
     }
 }
@@ -346,12 +347,12 @@ function gameOver() {
 function scoreHandler (){
     if(game_over){
 
-        scoreEle.classList.remove("hidden")
+       scoreEle.classList.remove("hidden")
        highscoreEle.classList.remove("hidden")
        highscoreval.innerHTML="";
        highscoreval.innerHTML=`${localStorage.getItem("highscore")}`
        scoreval.innerHtml="";
-       scoreval.innerHtml=`${Score}`;
+       scoreval.innerHTML=`${Score}`
 
     }
     
@@ -395,11 +396,12 @@ function levelUp(){
 
 }
 
-freeblocks (brick.rows,"solid")
 
 function freeblocks (rows,value){
 
-       let num = Math.random() * (3- 1) + 1;
+       let num = Math.random() * (2- 1) + 1;
+       solidbricks = num*rows;
+       
     for( i = 0 ; i<rows ; i++){
 
      
@@ -413,18 +415,22 @@ function freeblocks (rows,value){
 
      }
 
+     
+
      for( i = 0 ; i<rows ; i++){
-        for( j = 0 ; j<num ; j++){
+        for( j = 0 ; j<brick.cols; j++){
           if( bricks[i][j].status != value){
             bricks[i][j].status=2;
 }
 
+console.log(bricks[i][j].status);
+
 if(j>0){
 
     if(bricks[i][j].status==value&&bricks[i][j-1].status==value){
-        console.log(j);
-        console.log(j-1);
-        console.log("======================");
+        // console.log(j);
+        // console.log(j-1);
+        // console.log("======================");
         bricks[i][j].status=2; 
         if((j+1)!=7){
             bricks[i][j+1].status=value;
