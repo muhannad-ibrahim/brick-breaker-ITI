@@ -16,12 +16,12 @@ const BALL_RADIUS = 10;
 const SPEED_PER_UNIT_TIME = 4;
 const POWERUP_PROBABILITY = 0.3;
 const POWERUP_SPEED = 0.15;
+const PERCENT_WIDTH_CHANGE = 1.25;
 let powerUps = [];
-let extendWidthPUP = false;
+let extendWidthPUP = 4;
 let solidbricks = 0;
-// let stickyBallPUP = false;
-let shrinkWidthPdown = false;
-let strongBallPUP = false;
+let shrinkWidthPdown = 4;
+let superBallPUP = false;
 let Level = 1;
 let Max_Level = 3;
 let Game_Over = 0;
@@ -80,7 +80,7 @@ const paddle = {
     width: PADDLE_WIDTH,
     height: PADDLE_HEIGHT,
     x: (canvas.width - PADDLE_WIDTH) / 2,
-    y: canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM -10,
+    y: canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM,
     dx: PADDLE_dX
 };
 
@@ -106,7 +106,7 @@ const PowerUpTypes = {
     shrinkWidthPdown: {color: "black", symbol: "><"},
     increaseLife: {color: "green", symbol: "+"},
     extendWidthPUP: {color:"white", symbol: "<>"},
-    strongBall: {color: "yellow", symbol: "S"},
+    superBall: {color: "yellow", symbol: "S"},
     decreaseLife: {color: "red", symbol: "-"}
 };
 
@@ -120,7 +120,7 @@ function drawPaddle() {
 
 function drawBall() {
     ctx.beginPath();
-    ctx.fillStyle = strongBallPUP ? "yellow" :"red";
+    ctx.fillStyle = superBallPUP ? "yellow" :"red";
     ctx.lineWidth = "3"
     ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
     ctx.fill();
@@ -137,6 +137,16 @@ function resetBall() {
     paddle.x = (canvas.width - PADDLE_WIDTH) / 2;
     paddle.y = canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM;
     paddle.dx = PADDLE_dX ;
+
+    enterKey = false;
+    BallMoved = false;
+}
+
+function resetPUPs() {
+    superBallPUP = false;
+    paddle.width = PADDLE_WIDTH;
+    extendWidthPUP = 4;
+    shrinkWidthPdown = 4;
 }
 
 function moveBall() {
@@ -157,6 +167,7 @@ function ballWallCollision() {
     else if (ball.y + ball.r > canvas.height) {
         LIFE--;
         resetBall();
+        resetPUPs();
     }
     else if(ball.dx === 0){
         resetBall();
@@ -183,33 +194,28 @@ function powerUpsPaddleCollision() {
             powerUps[i].y - powerUps[i].height / 2 < paddle.y + paddle.height) {
                 switch(powerUps[i].type) {
                     case PowerUpTypes.extendWidthPUP:
-                        if (!extendWidthPUP) {
-                            extendWidthPUP = true;
-                            shrinkWidthPdown = false;
-                            paddle.width *= 1.5;
+                        if (extendWidthPUP > 0) {
+                            extendWidthPUP --;
+                            shrinkWidthPdown ++;
+                            paddle.width *= PERCENT_WIDTH_CHANGE;
                             break;
                         }
                     case PowerUpTypes.shrinkWidthPdown:
-                        if (!shrinkWidthPdown) {
-                            shrinkWidthPdown = true;
-                            extendWidthPUP = false;
-                            paddle.width /= 1.5;
+                        if (shrinkWidthPdown > 0) {
+                            shrinkWidthPdown --;
+                            extendWidthPUP ++;
+                            paddle.width /= PERCENT_WIDTH_CHANGE;
                             break;
                         }
-                    // case PowerUpTypes.stickyBall:
-                    //     if (!stickyBallPUP) {
-                    //         stickyBallPUP = true;
-                    //         break;
-                    //     }
                     case PowerUpTypes.increaseLife:
                         LIFE ++;
                         break;
                     case PowerUpTypes.decreaseLife:
                         LIFE --;
                         break;
-                    case PowerUpTypes.strongBall:
-                        if (!strongBallPUP) {
-                            strongBallPUP = true;
+                    case PowerUpTypes.superBall:
+                        if (!superBallPUP) {
+                            superBallPUP = true;
                             break;
                         }
                 }
@@ -315,7 +321,7 @@ function ballBrickCollision() {
                       powerUps.push(new PowerUp(pupX, pupY, pupSize, PowerUpTypes[pupSelected])); 
                   }
                   if(bricks[i][j].status != "solid"){
-                  if (strongBallPUP) {
+                  if (superBallPUP) {
                     bricks[i][j].status = 0;
                     Score += ScoreUnit;
                   } else {
@@ -338,11 +344,10 @@ function gameOver() {
         Game_Over = 1;
         /* to show game over message */
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, 850, 500);
+        ctx.drawImage(img, 0, 0, 700, 500);
         checkhighscore ();
         scoreHandler ();
         ctx.drawImage(game_over,120,120,300,300);
- 
     }
 }
 
@@ -355,7 +360,6 @@ function scoreHandler (){
        highscoreval.innerHTML=`${localStorage.getItem("highscore")}`
        scoreval.innerHtml="";
        scoreval.innerHTML=`${Score}`
-
     }
     
 }
@@ -385,6 +389,7 @@ function levelUp(){
         createBrikersHandler();
         ball.speed += 0.5;
         resetBall();
+        resetPUPs();
         Level++;
         if( Level==2){
            freeblocks(brick.rows,0); 
