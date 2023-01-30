@@ -12,12 +12,13 @@ body {
   justify-content: space-between;
   align-items: center;
   font-family: Arial;
-  background: linear-gradient(
-    340deg,
+  /* background: linear-gradient(
+     340deg,
     rgba(1, 0, 7, 1) 30%,
-    rgba(166, 6, 7, 0.9585084033613446) 100%
-  );
+    rgba(166, 6, 7, 0.9585084033613446) 100% 
+  ); */
   color: white;
+ 
 }
 
 header h1 {
@@ -28,14 +29,19 @@ header h1 {
 
 #replay{
   position: absolute;
-  top: 65%;
-  left: 43%;
+  top: 75%;
+  left: 37.7%;
   z-index: 99;
   cursor: pointer;
   font-size: 350%;
   display: none;
 }
+#replay:hover{
 
+  
+  color: rgb(45, 74, 74);
+
+}
 #sound {
   position: fixed;
   cursor: pointer;
@@ -49,7 +55,7 @@ header h1 {
 
 #modal {
   position: absolute;
-  top: 50%;
+  top: 80%;
   transform: translateY(-50%);
   justify-content: center;
   align-items: center;
@@ -64,6 +70,19 @@ header h1 {
   border-radius: 20px;
   font-family: fantasy;
 }
+
+#menu{
+
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  z-index: 100;
+}
+
 #highscore,
 #yourscore {
   width: 220px;
@@ -71,13 +90,13 @@ header h1 {
   position: absolute;
   z-index: 3;
   top: 23%;
-  left: 32%;
-  font-size: 180%;
+  left: 25%;
+  font-size: 200%;
   text-align: center;
   padding-top: 20px;
   color: red;
   font-family: "Gamja Flower";
-  background-color: rgb(35, 34, 34);
+  background-color: rgb(30, 28, 59);
   text-transform: capitalize;
   border-radius: 20px;
   border-style: solid;
@@ -91,18 +110,19 @@ header h1 {
 }
 
 #modal:hover #start {
-  background: red;
+ 
   color: #fff;
 }
 
 canvas {
-  /*background-image: url(media/BG.jpg);*/
+  background-image: url(media/pexels-harry-cooke-6194839.jpg);
   background-size: 850px 500px;
   background-repeat: no-repeat;
   margin: auto;
   position: relative;
   z-index: 1;
   border: solid 1px;
+  
 }
 
 .hidden {
@@ -125,4 +145,39 @@ footer a:hover {
 }
 #scorevalue {
   color: white;
+}
+#menu button{
+  display: block;
+
+  width:150px;
+  height: 50px;
+  border-radius: 30px;
+  background-color: rgb(135, 153, 169);
+  border-color: white;
+  border-width: 0;
+  color: rgb(145, 236, 193);
+  font-family: "Gamja Flower";
+  font-size: 25px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: auto;
+  margin-top: 20px;
+}
+
+#menu button:hover{
+
+  width:180px;
+  border-width: 2px;
+  border-color:wheate;
+
+
+}
+
+#menu div{
+
+  font-size: 40px;
+  font-family:'Arial Narrow', Arial, sans-serif;
+  color: rgb(65, 132, 132);
+  font-weight: bolder;
 }
