@@ -12,11 +12,10 @@ const PADDLE_WIDTH = 180;
 const PADDLE_HEIGHT = 20;
 const MARGIN_BOTTOM = 40;
 const PADDLE_dX = 7;
-const BALL_dX = 3 * (Math.random() * 2 - 1);
 const BALL_dY = -3;
 const BALL_RADIUS = 10;
 const SPEED_PER_UNIT_TIME = 5;
-const POWERUP_PROBABILITY = 0.3;
+const POWERUP_PROBABILITY = 1;
 const POWERUP_SPEED = 0.15;
 const PERCENT_WIDTH_CHANGE = 1.25;
 let powerUps = [];
@@ -24,6 +23,8 @@ let extendWidthPUP = 4;
 let solidbricks = 0;
 let shrinkWidthPdown = 4;
 let superBallPUP = false;
+let stickyBall = false;
+let BALL_dX = 3;
 let Level = 1;
 let Max_Level = 3;
 let Game_Over = 0;
@@ -112,14 +113,15 @@ const PowerUpTypes = {
   extendWidthPUP: { color: "white", symbol: "<>" },
   superBall: { color: "yellow", symbol: "S" },
   decreaseLife: { color: "red", symbol: "-" },
+  stickyBall: {color: "blue", symbol: "="}
 };
 
 function drawPaddle() {
-  ctx.fillStyle = "black";
-  ctx.lineWidth = "3";
-  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-  ctx.strokeStyle = "yellow";
-  ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
+  ctx.fillStyle = stickyBall === true ? "blue" : "rgb(226, 223, 210)";
+  ctx.lineWidth = "2";
+  ctx.roundRect(paddle.x, paddle.y, paddle.width, paddle.height, 50);
+  ctx.strokeStyle = stickyBall === true ? "blue" : "white";
+  ctx.fill();
 }
 
 function drawBall() {
@@ -151,6 +153,7 @@ function resetPUPs() {
   paddle.width = PADDLE_WIDTH;
   extendWidthPUP = 4;
   shrinkWidthPdown = 4;
+  stickyBall = false;
 }
 
 function moveBall() {
@@ -183,6 +186,12 @@ function ballPaddleCollision() {
     let collisionPointGradient =
       (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
     let collisionAngle = (collisionPointGradient * Math.PI) / 3;
+    if (stickyBall)
+    {
+      enterKey = false;
+      BallMoved = false;
+      paddle_hit.pause();
+    }
     ball.dx = ball.speed * Math.sin(collisionAngle);
     ball.dy = -ball.speed * Math.cos(collisionAngle);
   }
@@ -202,15 +211,15 @@ function powerUpsPaddleCollision() {
             extendWidthPUP--;
             shrinkWidthPdown++;
             paddle.width *= PERCENT_WIDTH_CHANGE;
-            break;
           }
+          break;
         case PowerUpTypes.shrinkWidthPdown:
           if (shrinkWidthPdown > 0) {
             shrinkWidthPdown--;
             extendWidthPUP++;
             paddle.width /= PERCENT_WIDTH_CHANGE;
-            break;
           }
+          break;
         case PowerUpTypes.increaseLife:
           LIFE++;
           break;
@@ -218,10 +227,11 @@ function powerUpsPaddleCollision() {
           LIFE--;
           break;
         case PowerUpTypes.superBall:
-          if (!superBallPUP) {
             superBallPUP = true;
-            break;
-          }
+          break;
+        case PowerUpTypes.stickyBall:
+          stickyBall = true;
+          break;
       }
       powerUps.splice(i, 1);
     }
@@ -359,8 +369,8 @@ function ballBrickCollision() {
             } else {
               bricks[i][j].status = bricks[i][j].status - 1;
               Score += ScoreUnit / 2;
+              ball.dy = -ball.dy;
             }
-            ball.dy = -ball.dy;
           }
         }
       }
