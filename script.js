@@ -6,6 +6,7 @@ const scoreEle = document.getElementById("yourscore");
 const scoreval = document.getElementById("scorevalue");
 const highscoreval = document.getElementById("highvalue");
 const replay = document.getElementById("replay");
+const hardl = document.getElementById("menu");
 const ctx = canvas.getContext("2d");
 const PADDLE_WIDTH = 180;
 const PADDLE_HEIGHT = 20;
@@ -28,11 +29,12 @@ let Max_Level = 3;
 let Game_Over = 0;
 let Score = 0;
 const ScoreUnit = 10;
-let LIFE = 50;
+let LIFE = 1;
 let rightKey = false;
 let leftKey = false;
 let enterKey = false;
 let BallMoved = false;
+let hard ="easy";
 
 const brick_hit = new Audio();
 brick_hit.src = "./sounds/brick_hit.mp3";
@@ -44,7 +46,7 @@ const win = new Audio();
 win.src = "./sounds/win.mp3";
 
 const img = new Image();
-img.src = "./media/BG.jpg";
+img.src = "./media/pexels-harry-cooke-6194839.jpg";
 
 const score_img = new Image();
 score_img.src = "./media/Star_image.png";
@@ -85,8 +87,7 @@ const paddle = {
   y: canvas.height - PADDLE_HEIGHT - MARGIN_BOTTOM,
   dx: PADDLE_dX,
 };
-
-const ball = {
+let ball = {
   r: BALL_RADIUS,
   x: canvas.width / 2,
   // x: paddle.x + paddle.width,
@@ -367,6 +368,27 @@ function ballBrickCollision() {
   }
   drawbricks();
 }
+hardmenu();
+function hardmenu(){
+
+    hardl.addEventListener("click",(e)=>{
+        
+    if(e.target.id==="easy")
+    {
+ball.speed=SPEED_PER_UNIT_TIME;
+    }
+
+    else if(e.target.id==="medium") {
+        ball.speed=SPEED_PER_UNIT_TIME+2;
+
+    }
+    else if (e.target.id==="hard"){
+        ball.speed=SPEED_PER_UNIT_TIME+5;
+    }
+
+        })
+
+}
 
 //======== Game over====//
 function gameOver() {
@@ -377,7 +399,7 @@ function gameOver() {
     ctx.drawImage(img, 0, 0, 850, 500);
     checkhighscore();
     scoreHandler();
-    ctx.drawImage(game_over_img, canvas.width / 3, canvas.height / 5, 300, 300);
+    ctx.drawImage(game_over_img, canvas.width /3.5, canvas.height / 5, 300, 300);
     replay.style.display = "block";
   }
 }
@@ -545,10 +567,12 @@ function loop() {
 }
 
 modalElt.addEventListener("click", function () {
+  hardl.classList.add("hidden");
   modalElt.classList.add("hidden");
   highscoreEle.classList.add("hidden");
   scoreEle.classList.add("hidden");
   document.getElementById("sound").style.display = "flex";
+  console.log(SPEED_PER_UNIT_TIME);
 
   loop();
 });
