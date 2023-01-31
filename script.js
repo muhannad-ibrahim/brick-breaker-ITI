@@ -13,10 +13,10 @@ function draw() {
   drawPaddle();
   drawBall();
   drawbricks();
-  gameStatus(Score, 300, 30, score_img, 250, 5);
-  gameStatus(Level, 520, 30, level_img,480, 5);
-  gameStatus(life, 740, 30, life_img, 690, 5);
-
+  gameStatus(Score, 70, 30, score_img,20, 5);
+  gameStatus(Level, 400, 30, level_img,350, 5);
+  gameStatus(life, 720, 30, life_img, 680, 5);
+z
 }
 
 function update() {
