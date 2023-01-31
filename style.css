@@ -31,14 +31,27 @@ header h1 {
 }
 
 #replay{
-  background-color: black;
   position: absolute;
   top: 70%;
   left: 41.5%;
   z-index: 99;
   cursor: pointer;
-  font-size: 350%;
+  font-size: 150%;
   display: none;
+  width: 130px;
+  height: 60px;
+  position: absolute;
+  text-align: center;
+  padding-top: 5px;
+  color:white;
+  font-family: "Gamja Flower";
+  background-color: rgb(30, 28, 59);
+  text-transform: capitalize;
+  border-radius: 20px;
+  border-style: solid;
+  border-color: white;
+
+ 
 }
 #replay:hover{
   color: yellow;
