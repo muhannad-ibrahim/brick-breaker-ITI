@@ -4,7 +4,7 @@ document.addEventListener("keydown", keydownHandler);
 document.addEventListener("keyup", keyupHandler);
 createBrikersHandler();
 hardmenu();
-freeblocks(brick.rows,"solid");
+
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -15,7 +15,9 @@ function draw() {
   drawbricks();
   gameStatus(Score, 70, 30, score_img,20, 5);
   gameStatus(Level, 400, 30, level_img,350, 5);
+
   gameStatus(life, 730, 30, life_img, 680, 5);
+
 }
 
 function update() {

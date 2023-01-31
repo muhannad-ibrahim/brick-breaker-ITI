@@ -32,7 +32,7 @@ let Level = 1;
 let Max_Level = 3;
 let Game_Over = 0;
 let Score = 0;
-let life = 3;
+let life = 30;
 let hard = "easy";
 
 let rightKey = false;
