@@ -35,7 +35,7 @@ let rightKey = false;
 let leftKey = false;
 let enterKey = false;
 let BallMoved = false;
-let hard ="easy";
+let hard = "easy";
 
 const brick_hit = new Audio();
 brick_hit.src = "./sounds/brick_hit.mp3";
@@ -113,11 +113,11 @@ const PowerUpTypes = {
   extendWidthPUP: { color: "white", symbol: "<>" },
   superBall: { color: "yellow", symbol: "S" },
   decreaseLife: { color: "red", symbol: "-" },
-  stickyBall: {color: "blue", symbol: "="}
+  stickyBall: { color: "blue", symbol: "=" },
 };
 
 function drawPaddle() {
-  ctx.fillStyle = stickyBall === true ? "blue" : "rgb(226, 223, 210)";
+  ctx.fillStyle = stickyBall === true ? "blue" : "black";
   ctx.lineWidth = "2";
   ctx.roundRect(paddle.x, paddle.y, paddle.width, paddle.height, 50);
   ctx.strokeStyle = stickyBall === true ? "blue" : "white";
@@ -186,8 +186,7 @@ function ballPaddleCollision() {
     let collisionPointGradient =
       (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
     let collisionAngle = (collisionPointGradient * Math.PI) / 3;
-    if (stickyBall)
-    {
+    if (stickyBall) {
       enterKey = false;
       BallMoved = false;
       paddle_hit.pause();
@@ -227,7 +226,7 @@ function powerUpsPaddleCollision() {
           LIFE--;
           break;
         case PowerUpTypes.superBall:
-            superBallPUP = true;
+          superBallPUP = true;
           break;
         case PowerUpTypes.stickyBall:
           stickyBall = true;
@@ -332,7 +331,7 @@ function drawbricks() {
 function ballBrickCollision() {
   for (i = 0; i < brick.rows; i++) {
     for (j = 0; j < brick.cols; j++) {
-      if(bricks[i][j].status == "solid"){
+      if (bricks[i][j].status == "solid") {
         if (
           ball.x + ball.r > bricks[i][j].xpos &&
           ball.x - ball.r < bricks[i][j].xpos + brick.width &&
@@ -379,25 +378,33 @@ function ballBrickCollision() {
   drawbricks();
 }
 hardmenu();
-function hardmenu(){
-
-    hardl.addEventListener("click",(e)=>{
-        
-    if(e.target.id==="easy")
-    {
-ball.speed=SPEED_PER_UNIT_TIME;
+function hardmenu() {
+  hardl.addEventListener("click", (e) => {
+    if (e.target.id === "easy") {
+      ball.speed = SPEED_PER_UNIT_TIME;
+      document.getElementById("medium").removeAttribute("style");
+      document.getElementById("hard").removeAttribute("style");
+      e.target.style.width = "180px";
+      e.target.style.borderWidth = "2px";
+      e.target.borderColor = "wheate";
+    } 
+    else if (e.target.id === "medium") {
+      ball.speed = SPEED_PER_UNIT_TIME + 2;
+      document.getElementById("easy").removeAttribute("style");
+      document.getElementById("hard").removeAttribute("style");
+      e.target.style.width = "180px";
+      e.target.style.borderWidth = "2px";
+      e.target.borderColor = "wheate";
+    } 
+    else if (e.target.id === "hard") {
+      ball.speed = SPEED_PER_UNIT_TIME + 5;
+      document.getElementById("easy").removeAttribute("style");
+      document.getElementById("medium").removeAttribute("style");
+      e.target.style.width = "180px";
+      e.target.style.borderWidth = "2px";
+      e.target.borderColor = "wheate";
     }
-
-    else if(e.target.id==="medium") {
-        ball.speed=SPEED_PER_UNIT_TIME+2;
-
-    }
-    else if (e.target.id==="hard"){
-        ball.speed=SPEED_PER_UNIT_TIME+5;
-    }
-
-        })
-
+  });
 }
 
 //======== Game over====//
@@ -409,7 +416,13 @@ function gameOver() {
     ctx.drawImage(img, 0, 0, 850, 500);
     checkhighscore();
     scoreHandler();
-    ctx.drawImage(game_over_img, canvas.width /3.5, canvas.height / 5, 300, 300);
+    ctx.drawImage(
+      game_over_img,
+      canvas.width / 3.5,
+      canvas.height / 5,
+      300,
+      300
+    );
     replay.style.display = "block";
   }
 }
