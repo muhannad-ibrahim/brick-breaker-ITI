@@ -38,19 +38,23 @@ function freeblocks(rows, value) {
 function levelUp() {
     let isLevelFinished = true;
     let mainbricks = brick.rows * brick.cols ;
-    
+    console.log(mainbricks);
+    console.log(solidbricks);
     for (let i = 0; i < brick.rows; i++) {
       for (let j = 0; j < brick.cols; j++) {
         isLevelFinished = isLevelFinished && !bricks[i][j].status;
-        if(!bricks[i][j].status){
+        if(Level!= 2){
+          if(!bricks[i][j].status){
           mainbricks--;
         }
+        }
+        
       }
     }
-  
+    if(Level!= 2){
     if (mainbricks==solidbricks) {
       isLevelFinished=1;
-    }
+    }}
     if (isLevelFinished) {
       if (Level >=Max_Level  ) {
         win.play();
