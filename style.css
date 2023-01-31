@@ -53,6 +53,11 @@ header h1 {
 
  
 }
+#default{
+  color: white;
+font-size: 50%;
+      
+}
 #replay:hover{
   color: yellow;
 }
