@@ -30,7 +30,7 @@ let Max_Level = 3;
 let Game_Over = 0;
 let Score = 0;
 const ScoreUnit = 10;
-let LIFE = 1;
+let LIFE = 3;
 let rightKey = false;
 let leftKey = false;
 let enterKey = false;
@@ -77,7 +77,7 @@ const brick = {
   offsettop: 30,
   margintop: 50,
   offsetleft: 20,
-  rows: 2,
+  rows: 1,
   cols: 9,
 };
 
@@ -189,7 +189,7 @@ function ballPaddleCollision() {
     if (stickyBall) {
       enterKey = false;
       BallMoved = false;
-      paddle_hit.pause();
+      // paddle_hit.pause();
     }
     ball.dx = ball.speed * Math.sin(collisionAngle);
     ball.dy = -ball.speed * Math.cos(collisionAngle);
@@ -382,6 +382,7 @@ function hardmenu() {
   hardl.addEventListener("click", (e) => {
     if (e.target.id === "easy") {
       ball.speed = SPEED_PER_UNIT_TIME;
+      POWERUP_PROBABILITY=.5
       document.getElementById("medium").removeAttribute("style");
       document.getElementById("hard").removeAttribute("style");
       e.target.style.width = "180px";
@@ -390,6 +391,7 @@ function hardmenu() {
     } 
     else if (e.target.id === "medium") {
       ball.speed = SPEED_PER_UNIT_TIME + 2;
+      POWERUP_PROBABILITY=.3
       document.getElementById("easy").removeAttribute("style");
       document.getElementById("hard").removeAttribute("style");
       e.target.style.width = "180px";
@@ -398,6 +400,7 @@ function hardmenu() {
     } 
     else if (e.target.id === "hard") {
       ball.speed = SPEED_PER_UNIT_TIME + 5;
+      POWERUP_PROBABILITY=.2
       document.getElementById("easy").removeAttribute("style");
       document.getElementById("medium").removeAttribute("style");
       e.target.style.width = "180px";
@@ -446,15 +449,26 @@ function gameStatus(text, textx, texty, img, imgx, imgy) {
 
 function levelUp() {
   let isLevelFinished = true;
+  let mainbricks = brick.rows * brick.cols ;
+  console.log(mainbricks);
+  console.log(solidbricks)
   for (let i = 0; i < brick.rows; i++) {
     for (let j = 0; j < brick.cols; j++) {
       isLevelFinished = isLevelFinished && !bricks[i][j].status;
+if(!bricks[i][j].status){
+ mainbricks--;
+}
     }
   }
+  if(mainbricks==solidbricks){
+    isLevelFinished=1;
+  }
   if (isLevelFinished) {
-    if (Level >= Max_Level) {
+    if (Level >=Max_Level  ) {
       win.play();
       winGame();
+      sound.classList.add("hidden");
+
       return;
     }
     brick.rows++;
@@ -464,6 +478,7 @@ function levelUp() {
     resetPUPs();
     Level++;
     if (Level == 2) {
+      console.log(ball.speed)
       freeblocks(brick.rows, 0);
     } else if (Level == 3) {
       freeblocks(brick.rows, "solid");
@@ -479,9 +494,9 @@ function winGame() {
   ctx.drawImage(youwon_img, canvas.width / 3, canvas.height / 5, 300, 250);
   replay.style.display = "block";
 }
-
+freeblocks(brick.rows,"solid");
 function freeblocks(rows, value) {
-  let num = Math.random() * (2 - 1) + 1;
+  let num = Math.trunc(Math.random() * (2 - 1) + 1);
   solidbricks = num * rows;
 
   for (i = 0; i < rows; i++) {
@@ -528,9 +543,10 @@ function draw() {
   drawPaddle();
   drawBall();
   drawbricks();
-  gameStatus(Score, 60, 30, score_img, 10, 5);
-  gameStatus(LIFE, 750, 30, life_img, 700, 5);
-  gameStatus(Level, 410, 30, level_img, 360, 5);
+  gameStatus(Score, 300, 30, score_img, 250, 5);
+  gameStatus(Level, 520, 30, level_img,480, 5);
+  gameStatus(LIFE, 740, 30, life_img, 690, 5);
+
 }
 
 function drawPups() {

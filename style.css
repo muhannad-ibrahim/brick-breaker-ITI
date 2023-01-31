@@ -33,12 +33,12 @@ header h1 {
 #replay{
   position: absolute;
   top: 70%;
-  left: 41.5%;
+  left: 43.5%;
   z-index: 99;
   cursor: pointer;
   font-size: 150%;
   display: none;
-  width: 130px;
+  width: 150px;
   height: 60px;
   position: absolute;
   text-align: center;
@@ -50,6 +50,8 @@ header h1 {
   border-radius: 20px;
   border-style: solid;
   border-color: white;
+  text-align: center;
+  padding-bottom: 10px;
 
  
 }
@@ -66,8 +68,8 @@ font-size: 50%;
   cursor: pointer;
   width: 30px;
   height: 30px;
-  top: 77%;
-  left: 28%;
+  top:12%;
+  left: 25%;
   z-index: 99;
   display: none;
 }
@@ -106,8 +108,8 @@ font-size: 50%;
   height: 80px;
   position: absolute;
   z-index: 3;
-  top: 23%;
-  left: 25%;
+  top: 18%;
+  left: 29%;
   font-size: 200%;
   text-align: center;
   padding-top: 20px;
