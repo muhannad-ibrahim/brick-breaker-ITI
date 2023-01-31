@@ -15,9 +15,9 @@ const PADDLE_dX = 7;
 const BALL_dY = -3;
 const BALL_RADIUS = 10;
 const SPEED_PER_UNIT_TIME = 5;
-const POWERUP_PROBABILITY = 1;
 const POWERUP_SPEED = 0.15;
 const PERCENT_WIDTH_CHANGE = 1.25;
+let POWERUP_PROBABILITY = 1;
 let powerUps = [];
 let extendWidthPUP = 4;
 let solidbricks = 0;
@@ -382,7 +382,7 @@ function hardmenu() {
   hardl.addEventListener("click", (e) => {
     if (e.target.id === "easy") {
       ball.speed = SPEED_PER_UNIT_TIME;
-      POWERUP_PROBABILITY=.5
+      POWERUP_PROBABILITY= 0.6;
       document.getElementById("medium").removeAttribute("style");
       document.getElementById("hard").removeAttribute("style");
       e.target.style.width = "180px";
@@ -391,7 +391,7 @@ function hardmenu() {
     } 
     else if (e.target.id === "medium") {
       ball.speed = SPEED_PER_UNIT_TIME + 2;
-      POWERUP_PROBABILITY=.3
+      POWERUP_PROBABILITY= 0.4;
       document.getElementById("easy").removeAttribute("style");
       document.getElementById("hard").removeAttribute("style");
       e.target.style.width = "180px";
@@ -400,7 +400,7 @@ function hardmenu() {
     } 
     else if (e.target.id === "hard") {
       ball.speed = SPEED_PER_UNIT_TIME + 5;
-      POWERUP_PROBABILITY=.2
+      POWERUP_PROBABILITY= 0.2;
       document.getElementById("easy").removeAttribute("style");
       document.getElementById("medium").removeAttribute("style");
       e.target.style.width = "180px";
@@ -450,8 +450,7 @@ function gameStatus(text, textx, texty, img, imgx, imgy) {
 function levelUp() {
   let isLevelFinished = true;
   let mainbricks = brick.rows * brick.cols ;
-  console.log(mainbricks);
-  console.log(solidbricks)
+  
   for (let i = 0; i < brick.rows; i++) {
     for (let j = 0; j < brick.cols; j++) {
       isLevelFinished = isLevelFinished && !bricks[i][j].status;
@@ -478,7 +477,6 @@ if(!bricks[i][j].status){
     resetPUPs();
     Level++;
     if (Level == 2) {
-      console.log(ball.speed)
       freeblocks(brick.rows, 0);
     } else if (Level == 3) {
       freeblocks(brick.rows, "solid");
@@ -511,13 +509,8 @@ function freeblocks(rows, value) {
         bricks[i][j].status = 2;
       }
 
-      console.log(bricks[i][j].status);
-
       if (j > 0) {
         if (bricks[i][j].status == value && bricks[i][j - 1].status == value) {
-          console.log(j);
-          console.log(j - 1);
-          console.log("======================");
           bricks[i][j].status = 2;
           if (j + 1 != 7) {
             bricks[i][j + 1].status = value;
@@ -611,8 +604,6 @@ modalElt.addEventListener("click", function () {
   highscoreEle.classList.add("hidden");
   scoreEle.classList.add("hidden");
   document.getElementById("sound").style.display = "flex";
-  console.log(SPEED_PER_UNIT_TIME);
-
   loop();
 });
 

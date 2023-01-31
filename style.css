@@ -12,7 +12,7 @@ body {
   justify-content: space-between;
   align-items: center;
   font-family: Arial;
-  background: url(./media/BG.jpg);
+  background: url(./media/body2.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   /* background: linear-gradient(
@@ -21,7 +21,6 @@ body {
     rgba(166, 6, 7, 0.9585084033613446) 100% 
   ); */
   color: white;
- 
 }
 
 header h1 {
@@ -30,7 +29,7 @@ header h1 {
   letter-spacing: 0.1em;
 }
 
-#replay{
+#replay {
   position: absolute;
   top: 70%;
   left: 43.5%;
@@ -43,7 +42,7 @@ header h1 {
   position: absolute;
   text-align: center;
   padding-top: 5px;
-  color:white;
+  color: white;
   font-family: "Gamja Flower";
   background-color: rgb(30, 28, 59);
   text-transform: capitalize;
@@ -52,15 +51,12 @@ header h1 {
   border-color: white;
   text-align: center;
   padding-bottom: 10px;
-
- 
 }
-#default{
+#default {
   color: white;
-font-size: 50%;
-      
+  font-size: 50%; 
 }
-#replay:hover{
+#replay:hover {
   color: yellow;
 }
 #sound {
@@ -68,8 +64,8 @@ font-size: 50%;
   cursor: pointer;
   width: 30px;
   height: 30px;
-  top:12%;
-  left: 25%;
+  top: 20%;
+  left: 27%;
   z-index: 99;
   display: none;
 }
@@ -92,7 +88,7 @@ font-size: 50%;
   font-family: fantasy;
 }
 
-#menu{
+#menu {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -140,7 +136,6 @@ canvas {
   position: relative;
   z-index: 1;
   border: solid 1px;
-  
 }
 
 .hidden {
@@ -164,9 +159,9 @@ footer a:hover {
 #scorevalue {
   color: white;
 }
-#menu button{
+#menu button {
   display: block;
-  width:150px;
+  width: 150px;
   height: 50px;
   border-radius: 30px;
   background-color: rgb(135, 153, 169);
@@ -182,20 +177,20 @@ footer a:hover {
   margin-top: 20px;
 }
 
-#menu button:hover{
-  width:180px;
+#menu button:hover {
+  width: 180px;
   border-width: 2px;
-  border-color:wheate;
+  border-color: wheate;
 }
 .reset-style {
-  width:150px;
+  width: 150px;
   border-color: white;
   border-width: 0;
 }
 
-#menu div{
+#menu div {
   font-size: 40px;
-  font-family:'Arial Narrow', Arial, sans-serif;
+  font-family: "Arial Narrow", Arial, sans-serif;
   color: rgb(65, 132, 132);
   font-weight: bolder;
 }
