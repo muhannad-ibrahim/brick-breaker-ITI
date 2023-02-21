@@ -12,14 +12,14 @@ body {
   justify-content: space-between;
   align-items: center;
   font-family: Arial;
-  background: url(./media/body2.jpg);
+  /* background: url(./media/body2.jpg);
   background-size: cover;
-  background-repeat: no-repeat;
-  /* background: linear-gradient(
+  background-repeat: no-repeat; */
+  background: linear-gradient(
      340deg,
     rgba(1, 0, 7, 1) 30%,
     rgba(166, 6, 7, 0.9585084033613446) 100% 
-  ); */
+  );
   color: white;
 }
 
@@ -27,6 +27,51 @@ header h1 {
   font-weight: normal;
   padding: 20px;
   letter-spacing: 0.1em;
+}
+
+.toggle{
+  width: 95%;
+  text-align: right;
+  font-size: 38px;
+}
+
+@media (max-width: 20000px) {
+  .active{
+    display: block;
+  }
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  margin: 8px 22px 8px 22px;
+  overflow: hidden;
+  width: 95%; 
+  font-size: 1.6vw;
+  display: block;
+}
+
+nav ul {
+  margin: 0 auto;
+  padding: 0;
+  display: none;
+}
+ 
+nav ul li {
+  display: inline-block;
+  list-style-type: none;
+  padding-top: 10;
+}
+	  
+nav > ul > li > a {
+  color: darkgoldenrod;
+  line-height: 40px;
+  padding: 0 10px;
+  text-decoration: none;
+}
+
+nav > ul > li > a:hover {
+  color: wheat;
 }
 
 #replay {

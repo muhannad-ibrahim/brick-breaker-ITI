@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
     <script src='./Utility/variables.js' defer></script>
     <script src='./App/paddle.js' defer></script>
     <script src='./App/ball.js' defer></script>
@@ -27,6 +28,19 @@
         <h1>Brick Breaker Game</h1>
     </header>
 
+    <nav>
+        <div class="toggle">
+            <i class="fa-solid fa-bars menu2"></i>
+        </div>
+        <ul>
+            <li><a href="#"><b>Replay</b></a>
+            </li>
+
+            <li><a href="#"><b>Pause</b></a>
+            </li>
+        </ul>
+    </nav>
+
     <div class="sound">
         <img src="./media/SOUND_ON.png" id="sound">
     </div>
@@ -34,7 +48,7 @@
     <button id="replay">
         Play Again!
     </button>
-    
+
     <main>
         <canvas id="breakOutGame" width="800px" height="500px" style="border: 1px solid black;"></canvas>
     </main>
@@ -56,6 +70,18 @@
     <footer>
         <p>Created by <a href="https://github.com/muhannad-ibrahim/brick-breaker-ITI" target="_blank">Itians</a></p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.3.js"></script>
+
+    <script type="text/javascript">
+        $(() => {
+            $('.menu2').click(() => {
+                $('ul').toggleClass('active');
+                // console.log("sdsd");
+            })
+        });
+        
+    </script>
 </body>
 
 </html>
